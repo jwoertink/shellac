@@ -1,0 +1,2 @@
+defmodule Shellac do
+end
