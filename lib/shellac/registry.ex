@@ -30,7 +30,7 @@ defmodule Shellac.Registry do
     GenServer.call(server, :stop)
   end
 
-  # Server Callbacks
+  # GenServer Callbacks
 
   def init(:ok) do
     names = HashDict.new
