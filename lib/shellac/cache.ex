@@ -21,6 +21,9 @@ defmodule Shellac.Cache do
     Agent.update(bucket, &HashDict.put(&1, key, value))
   end
 
+  @doc """
+    Delete `key` and the value from `bucket`
+  """
   def delete(bucket, key) do
     Agent.get_and_update(bucket, &HashDict.pop(&1, key))
   end
