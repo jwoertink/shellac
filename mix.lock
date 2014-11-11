@@ -1,5 +1,8 @@
 %{"cauldron": {:git, "git://github.com/meh/cauldron.git", "2e8bebc30c9c7b8266d24631e2eb4871a6bbd728", []},
   "exts": {:hex, :exts, "0.2.2"},
+  "hackney": {:hex, :hackney, "0.14.3"},
+  "httpoison": {:hex, :httpoison, "0.5.0"},
   "httprot": {:hex, :httprot, "0.1.5"},
+  "idna": {:hex, :idna, "1.0.1"},
   "reagent": {:hex, :reagent, "0.1.5"},
   "socket": {:hex, :socket, "0.2.8"}}

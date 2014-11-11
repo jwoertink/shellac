@@ -14,6 +14,9 @@ defmodule Shellac.Mixfile do
 
   # mix deps.get
   defp deps do
-    [{:cauldron, github: "meh/cauldron"}]
+    [
+      {:cauldron, github: "meh/cauldron"},
+      {:httpoison, "~> 0.5"}
+    ]
   end
 end
