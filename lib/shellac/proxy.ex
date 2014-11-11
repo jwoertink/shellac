@@ -7,7 +7,6 @@ defmodule Shellac.Proxy do
   end
 
   def process_response_body(body) do
-    IO.puts body
     body
   end
 end
