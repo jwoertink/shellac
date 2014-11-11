@@ -14,6 +14,8 @@ Not currently in a working state, but the idea would be that you would boot the 
 ## Running
 
 * `iex -S mix`
+* `{:ok, registry} = Shellac.Registry.start_link`
+* `Shellac.Registry.store(registry, "pages")`
 * `Shellac.Proxy.start`
 * `Cauldron.start(Shellac.Server, port: 3000)`
 
