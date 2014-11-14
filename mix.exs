@@ -9,7 +9,8 @@ defmodule Shellac.Mixfile do
   end
 
   def application do
-    [applications: [:logger]]
+    [applications: [],
+    mod: {Shellac, []}]
   end
 
   # mix deps.get
