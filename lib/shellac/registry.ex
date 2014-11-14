@@ -4,8 +4,8 @@ defmodule Shellac.Registry do
   @doc """
     Start the registry server
   """
-  def start_link(event_manager, opts \\ []) do
-    GenServer.start_link(__MODULE__, event_manager, opts)
+  def start_link(event_manager, buckets, opts \\ []) do
+    GenServer.start_link(__MODULE__, {event_manager, buckets}, opts)
   end
 
   @doc """
@@ -32,10 +32,10 @@ defmodule Shellac.Registry do
 
   # GenServer Callbacks
 
-  def init(events) do
+  def init({events, buckets}) do
     names = HashDict.new
     refs = HashDict.new
-    {:ok, %{names: names, refs: refs, events: events}}
+    {:ok, %{names: names, refs: refs, events: events, buckets: buckets}}
   end
 
   def handle_call({:lookup, name}, _from, state) do
@@ -50,7 +50,7 @@ defmodule Shellac.Registry do
     if HashDict.get(state.names, name) do
       {:noreply, state}
     else
-      {:ok, bucket} = Shellac.Cache.start_link
+      {:ok, bucket} = Shellac.Cache.Supervisor.start_bucket(state.buckets)
       ref = Process.monitor(bucket)
       refs = HashDict.put(state.refs, ref, name)
       names = HashDict.put(state.names, name, bucket)

@@ -11,8 +11,9 @@ defmodule Shellac.RegistryTest do
   end
 
   setup do
+    {:ok, sup} = Shellac.Cache.Supervisor.start_link
     {:ok, manager} = GenEvent.start_link
-    {:ok, registry} = Shellac.Registry.start_link(manager)
+    {:ok, registry} = Shellac.Registry.start_link(manager, sup)
 
     GenEvent.add_mon_handler(manager, Forwarder, self())
     {:ok, registry: registry}
