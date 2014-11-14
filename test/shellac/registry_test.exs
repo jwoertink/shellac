@@ -1,8 +1,20 @@
 defmodule Shellac.RegistryTest do
   use ExUnit.Case, async: true
 
+  defmodule Forwarder do
+    use GenEvent
+
+    def handle_event(event, parent) do
+      send parent, event
+      {:ok, parent}
+    end
+  end
+
   setup do
-    {:ok, registry} = Shellac.Registry.start_link
+    {:ok, manager} = GenEvent.start_link
+    {:ok, registry} = Shellac.Registry.start_link(manager)
+
+    GenEvent.add_mon_handler(manager, Forwarder, self())
     {:ok, registry: registry}
   end
 
@@ -18,10 +30,19 @@ defmodule Shellac.RegistryTest do
     assert Shellac.Cache.get(bucket, "index.html") == "<p>Hello</p>"
   end
 
-  test "removes bucket on exit", %{registry: registry} do
+  # test "removes bucket on exit", %{registry: registry} do
+  #   Shellac.Registry.store(registry, "pages")
+  #   {:ok, bucket} = Shellac.Registry.fetch(registry, "pages")
+  #   Agent.stop(bucket) #kill the bucket
+  #   assert Shellac.Registry.fetch(registry, "pages") == :error
+  # end
+
+  test "sends events on create and crash", %{registry: registry} do
     Shellac.Registry.store(registry, "pages")
     {:ok, bucket} = Shellac.Registry.fetch(registry, "pages")
-    Agent.stop(bucket) #kill the bucket
-    assert Shellac.Registry.fetch(registry, "pages") == :error
+    assert_receive {:create, "pages", ^bucket}
+
+    Agent.stop(bucket)
+    assert_receive {:exit, "pages", ^bucket}
   end
 end
