@@ -30,12 +30,21 @@ defmodule Shellac.RegistryTest do
     assert Shellac.Cache.get(bucket, "index.html") == "<p>Hello</p>"
   end
 
-  # test "removes bucket on exit", %{registry: registry} do
-  #   Shellac.Registry.store(registry, "pages")
-  #   {:ok, bucket} = Shellac.Registry.fetch(registry, "pages")
-  #   Agent.stop(bucket) #kill the bucket
-  #   assert Shellac.Registry.fetch(registry, "pages") == :error
-  # end
+  test "removes bucket on exit", %{registry: registry} do
+    Shellac.Registry.store(registry, "pages")
+    {:ok, bucket} = Shellac.Registry.fetch(registry, "pages")
+    Agent.stop(bucket) #kill the bucket
+    assert Shellac.Registry.fetch(registry, "pages") == :error
+  end
+
+  test "removes bucket on crash", %{registry: registry} do
+    Shellac.Registry.store(registry, "pages")
+    {:ok, bucket} = Shellac.Registry.fetch(registry, "pages")
+
+    Process.exit(bucket, :shutdown) #kill bucket
+    assert_receive {:exit, "pages", ^bucket}
+    assert Shellac.Registry.fetch(registry, "pages") == :error
+  end
 
   test "sends events on create and crash", %{registry: registry} do
     Shellac.Registry.store(registry, "pages")
